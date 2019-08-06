@@ -7,7 +7,7 @@
 
 @isTest
 public with sharing class TestRedirectConditionalUrlController {
-    
+
     @testSetup
     static void setupData(){
         Account a = new Account();
@@ -46,6 +46,5 @@ public with sharing class TestRedirectConditionalUrlController {
         System.assertEquals('NY', accountFromServer.ShippingState);
         System.assertEquals('US',accountFromServer.ShippingCountry);
     }
-
 
 }

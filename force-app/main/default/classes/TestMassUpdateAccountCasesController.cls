@@ -7,7 +7,7 @@
 
 @isTest
 public with sharing class TestMassUpdateAccountCasesController {
-    
+
     @testSetup
     static void setupData(){
         Account a = new Account();

@@ -1,8 +1,12 @@
 {
-    "orgName": "LEX Components Bundle",
+    "orgName": "LEX Components Bundle JP",
     "edition": "Developer",
-    "orgPreferences" : {
-        "enabled": ["S1DesktopEnabled"]
-    },
-    "hasSampleData": true
+    "country": "JP",
+    "language": "ja",
+    "hasSampleData": true,
+    "settings": {
+        "orgPreferenceSettings": {
+            "s1DesktopEnabled": true
+        }
+    }
 }

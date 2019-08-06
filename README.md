@@ -1,139 +1,143 @@
 # Sample Components for Lightning Component Actions
-This repository contains sample components to help you build Lightning component actions, which can be used to replace JavaScript buttons used in Salesforce Classic. These components cover the following use cases that are common in JavaScript buttons:
-1. Dialogues
-2. Conditional URL
-3. Mass Updates
+## はじめに
+このリポジトリは
+https://github.com/developerforce/LEXComponentsBundle の日本語意訳版です。ラベルとコメントを翻訳したほか一部コードの変更を行っています。また、動作確認をしやすくするためオリジナルには存在しないアクションボタン自体のメタデータも含んでいます（オブジェクトに依存しない 4.ldsDeleteRecord を除く）。<br>
+LWCは2019年8月現在アクションをサポートしていないため、すべてauraコンポーネントです。ロジック部分をLWCで記述しauraコンポーネントでwrapするという方法がありえますが、このリポジトリでは考慮していません。
+***
+## リポジトリの内容
+このリポジトリはLightning Actionを実装するためのサンプルLightningコンポーネント(auraコンポーネント)を含んでいます。Salesforce ClassicのJavaScriptボタンをLightning Actionに置き換える際の参考にしてください。このサンプルではJavaScriptボタンで一般的な以下のユースケースを取り上げています。
+1. ダイアログ
+2. 条件付きURL遷移
+3. 一括更新
 
-## Getting Started
-### Using Salesforce DX:
-* #### Mac or Linux
-```
-git clone https://github.com/developerforce/LEXComponentsBundle
-cd LEXComponentsBundle
-./install.sh
-```
-* #### Windows
-```
-git clone https://github.com/developerforce/LEXComponentsBundle
-cd LEXComponentsBundle
-install.cmd
-```
+## コンポーネントとクラス
+#### auraコンポーネント名を以下にリストしています。それぞれについて、ユースケース、対象オブジェクト、説明、関連するファイルを記載しています。
+#### Lightning Data Service を使っているコンポーネント名は“lds”で始まります。
 
-### Not using Salesforce DX: Install this unmanaged package to your Developer Edition or Sandbox org.
-[Click here to install](https://login.salesforce.com/packaging/installPackage.apexp?p0=04t1I000002y2tg)
-
-## How to Choose a Component
-1. Look at your org to determine which JavaScript buttons are still in use and need to be converted.
-2. Pick a button that you’d like to replace.
-3. From the component list, pick one that closely matches what your JavaScript button is doing.
-4. Edit the component sample code to match your needs. Tip: Make a copy of the component's files and modify those instead. 
-5. Test and deploy per the "Create and Test Your Lightning Component Action" section below.
-
-## Classes & Components
-##### Components are listed by name. Details include the use case it applies to, the object it acts upon, its description, and the set of files that make up the component.
-&nbsp;
-##### Components that use Lightning Data Service begin with “lds”. Components that don’t use Lightning Data Service have Apex classes associated with them.
-
-1. accountQuickContact
-    * Use case: Dialogues
-    * Object: Account
-    * Description: Opens a form to create a contact related to the account. This is similar to ldsAccountQuickContact, but in this case the data is sent to an Apex class instead.
-    * Files:
+1. accountQuickContact - 取引先責任者簡易作成(Apex)
+    * ユースケース: ダイアログ
+    * オブジェクト: 取引先(Account)
+    * 説明: フォームを開き取引先に紐づく取引先責任者を作成します。ldsAccountQuickContact と似ていますがこちらではApexクラスにデータを送信しています。
+    * ファイル:
         * accountQuickContact.cmp
         * accountQuickContactController.js
         * accountQuickContact.css
         * AccountQuickContactController.cls
         * TestAccountQuickContactController.cls
-2. ldsAccountQuickContact
-    * Use case: Dialogues
-    * Object: Account
-    * Description: An example of how Lightning Data Service works for creating a new record. Opens a form to create a contact related to the account. The data is sent to the server through the JavaScript controller, so no Apex class is needed.
-    * Files:
+        * Account.accountQuickContact.quickAction-meta.xml
+2. ldsAccountQuickContact - 取引先責任者簡易作成(LDS)
+    * ユースケース: ダイアログ
+    * オブジェクト: 取引先(Account)
+    * 説明: Lightning Data Service を使用して取引先に紐づく取引先責任者を作成します。 accountQuickContact と同様の機能をApexクラスなしに実現しています。
+    * ファイル:
         * ldsAccountQuickContact.cmp
         * ldsAccountQuickContactController.js
-        * ldsAccountQuickContactLDS.css
-3. ldsDisplayRecord
-    * Use case: Dialogues
-    * Object: Account
-    * Description: An example of how Lightning Data Service works for displaying a record. A popup window opens showing data about the current record. In this case, neither a JavaScript controller nor an Apex controller are needed.
-    * Files: 
+        * ldsAccountQuickContact.css
+        * Account.ldsAccountQuickContact.quickAction-meta.xml
+3. ldsDisplayRecord - ポップアップで取引先レコードの表示
+    * ユースケース: ダイアログ
+    * オブジェクト: 取引先(Account)
+    * 説明: Lightning Data Service を使用してレコードを表示する例です。ポップアップウィンドウで現行のレコードに関する情報を表示します。この場合はJavaScriptコントローラもApexコントローラも不要です。
+    * ファイル:
         * ldsDisplayRecord.cmp
         * ldsDisplayRecordController.js
         * ldsDisplayRecord.css
-4. ldsDeleteRecord
-    * Use case: Dialogues
-    * Object: Any
-    * Description: An example of how Lightning Data Service works for deleting a record. When the user executes the component, the JavaScript controller calls the server to delete the record, so no Apex class is needed.
-    * Files: 
+        * Account.ldsDisplayRecord.quickAction-meta.xml
+4. ldsDeleteRecord - レコード削除
+    * ユースケース: ダイアログ
+    * オブジェクト: オブジェクトの種類に依存せず
+    * 説明: Lightning Data Service を使用してレコードを削除する例です。JavaScriptコントローラでLDSを使ってレコードを削除するため、Apexコントローラは不要です。
+    * ファイル:
         * ldsDeleteRecord.cmp
         * ldsDeleteRecordController.js
         * ldsDeleteRecord.css
-5. ldsSaveRecord
-    * Use case: Dialogues
-    * Object: Account
-    * Description: An example of how Lightning Data Service works for updating a record. A popup window opens with information about the record and an editing form. Upon saving, the record is updated. The JavaScript controller sends the updated data to the server, so no Apex class is needed.
-    * Files: 
+5. ldsSaveRecord - 取引先名変更
+    * ユースケース: ダイアログ
+    * オブジェクト: 取引先(Account)
+    * 説明: Lightning Data Service を使用してレコードを更新する例です。ポップアップウィンドウで編集フォームが表示され、保存するとレコードが更新されます。この場合はJavaScriptコントローラもApexコントローラも不要です。JavaScriptコントローラでLDSを使ってレコードを更新するため、Apexコントローラは不要です。
+    * ファイル:
         * ldsSaveRecord.cmp
         * ldsSaveRecordController.js
         * ldsSaveRecord.css
-6. massUpdateAccountCases
-    * Use case: Mass updates
-    * Object: Account
-    * Description: Updates all the cases related to the account. It changes the case priority to “Low”, the status to “Closed” and the description to “Case Closed.”
-    * Files: 
+        * Account.ldsSaveRecord.quickAction-meta.xml
+6. massUpdateAccountCases - 取引先に紐づくケースの一括更新
+    * ユースケース: 一括更新
+    * オブジェクト: 取引先(Account)
+    * 説明: 取引先に紐づくケースを一括更新します。優先度を“Low”、状況を“Closed”、 説明を“Case Closed.”に更新します。
+    * ファイル:
         * massUpdateAccountCases.cmp
         * massUpdateAccountCases.css
         * MassUpdateAccountCasesController.js
         * MassUpdateAccountCasesController.cls
         * TestMassUpdateAccountCasesController.cls
-7. probonoOpportunity
-    * Use case: Dialogues
-    * Object: Opportunity
-    * Description: When executing this component in an opportunity, a popup window opens, asking for confirmation to convert the record to a pro-bono opportunity. If the user clicks “Confirm”, the opportunity amount updates to $0 and the page refreshes.
-    * Files: 
+        * Account.massUpdateAccountCases.quickAction-meta.xml
+7. probonoOpportunity - 商談をプロボノ商談（無料の商談）に変換
+    * ユースケース: ダイアログ
+    * オブジェクト: 商談(Opportunity)
+    * 説明: 実行すると確認のポップアップウィンドウが開き、続行すると、商談の金額が0になり、説明にプロボノ商談に変換されたことが追記されます。
+    * ファイル:
         * probonoOpportunity.cmp
         * probonoOpportunityController.js
         * probonoOpportunity.css
         * ProBonoOpportunityController.cls
         * TestProBonoOpportunityController.cls
-8. redirectConditionalUrl
-    * Use case: Conditional URL
-    * Object: Account
-    * Description: Opens a popup window with two options: One opens the billing address in Google Maps, and the other opens the shipping address. This uses the record ID, sends it to the server, and retrieves the address data.
-    * Files: 
+        * Opportunity.probonoOpportunity.quickAction-meta
+8. redirectConditionalUrl - 取引先の請求先あるいは納入先の地図を表示
+    * Use case: 条件付きURL遷移
+    * オブジェクト: 取引先(Account)
+    * 説明: ポップアップウィンドウで請求先か納入先かを選択すると、その住所をGoogle Mapで開きます。レコードIDをサーバに送り住所情報を得ています。
+    * ファイル:
         * redirectConditionalUrl.cmp
         * redirectConditionalUrlController.js
         * recirectConditionalUrlHelper.js
         * redirectConditionalUrl.css
         * RedirectConditionalUrlController.cls
         * TestRedirectConditionalUrlController.cls
-9. setOpportunityProbability
-    * Use case: Dialogues
-    * Object: Opportunity
-    * Description: Opens a popup window with three buttons. One button sets the probability of the opportunity to a High value (%80), another sets it to a medium value (%50), and the last to a low value (%20). The Javascript controller sends the record ID and the option selected to the Apex class.
-    * Files: 
+        * Account.redirectConditionalUrl.quickAction-meta.xml
+9. setOpportunityProbability - 商談の確度をボタンで更新
+    * ユースケース: ダイアログ
+    * オブジェクト: 商談(Opportunity)
+    * 説明: ポップアップウィンドウで３つのボタンを表示します。ボタンを押すと商談の確度がそれぞれ 80%, 50%, 20% に更新されます。JavaScriptコントローラがレコードIDと選ばれた選択肢をApexクラスに送信しています。
+    * ファイル:
         * setOpportunityProbability.cmp
         * setOpportunityProbabilityController.js
         * setOpportunityProbabilityHelper.js
-        setOpportunityProbability.css
+        * setOpportunityProbability.css
         * setOpportunityProbabilityController.cls
         * TestSetOpportunityProbabilityController.cls
+        * Opportunity.setOpportunityProbability.quickAction-meta.xml
 
-## Create and Test Your Lightning Component Action
-1. Make sure the Lightning components are installed in your org.
-2. In Setup, go to the Object Manager.
-3. Select the object that you want to add the action to.
-4. Click **Buttons, Links & Actions**, then click **New Action**.
-5. From the Action Type drop down list, select **Lightning Component**.
-6. Select the component you want to be called by the action.
-7. Enter a label for the action, then click **Save**.
-8. Add the action to the object’s page layout. <br>
-    a. Click **Page Layouts**. <br>
-    b. Select the layout you want to add the action to. <br>
-    c. If you haven’t already, click **override the predefined actions** in the *Salesforce Mobile and Lightning Experience* section of the layout. <br>
-    d. In the palette, click the **Mobile & Lightning Actions** category, and then drag the action that you created to the *Salesforce Mobile and Lightning Experience* section.<br>
-    e. Click **Save**.
-9. Navigate to a record and give the quick action a try. You’ll likely find it in the page-level actions menu in the record highlights panel.
+## 利用方法
+JavaScriptボタンに対応する機能をLightningで実装したい場合、まずは[Lightning Configuration Converter](https://lightning-configuration.salesforce.com/)で他の仕組みに変換できないかをご確認下さい。使用方法は[こちら](https://success.salesforce.com/0D53A00003tjmxL)を参照してください。
+代替手段をLightning Actionで実装する必要があると判断した場合は、このサンプルから実際のユースケースに近いものを選び変更してみてください。
+## インストール方法
+まずはサンプルをインストールし、それぞれがどのように動作するか確認されることをお勧めします。
+### Salesforce CLI を使用:
+sfdxコマンドが使用できDevHubと接続している場合、以下のコマンドでScratch組織を作成しLightning Actionをインストールすることができます。
+* #### Mac / Linux
+```
+git clone https://github.com/az-ak/LEXComponentsBundleJP
+cd LEXComponentsBundleJP
+./install.sh
+```
+* #### Windows
+```
+git clone https://github.com/az-ak/LEXComponentsBundleJP
+cd LEXComponentsBundleJP
+install.cmd
+```
+### Salesforce CLI を使用しない:
+Developer EditionあるいはSandbox組織に非管理パッケージとしてインストールする場合はこのリンクからインストールしてください。
+[Click here to install](https://login.salesforce.com/packaging/installPackage.apexp?p0=04t0I000000jDZK)
 
+## インストール後の設定
+Salesforce CLIでインストールした場合も、非管理パッケージでインストールした場合も、実際に確認する前にLightning Actionをページレイアウトに載せる必要があります。<br>
+ボタンを載せたいオブジェクトのページレイアウトを開き、**Salesforce モバイルおよび Lightning Experience のアクション**のセクションに**モバイルおよび Lightning のアクション**からボタンをドラッグアンドドロップしてください。
+（**Salesforce モバイルおよび Lightning Experience のアクション**のエリアに何もない場合、最初に**定義済みアクションを上書き**のリンクをクリックしてください。）
 
-*Let us know how you feel about the components. Post your feedback and questions to the [Lightning Now! group](https://success.salesforce.com/featuredGroupDetail?id=a1z3A000007SBrQQAW) in the Trailblazer Community with the hashtag #JS_Alternatives.*
+4.ldsDeleteRecord についてはアクションボタンを事前作成していません。これを確認する場合は、以下の手順でアクションボタンの作成から行ってください。
+1. ボタンを載せたいオブジェクトの**ボタン、リンク、およびアクション**から**新規アクション**を作成
+2. **アクション種別**で**Lightning コンポーネント**を選択
+3. **Lightning コンポーネント**で**c.ldsDeleteRecord**を選択
+4. 高さ、表示ラベル、名前を入力し保存
+5. アクションボタンをページレイアウトに配置

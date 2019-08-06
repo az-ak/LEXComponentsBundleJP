@@ -6,11 +6,15 @@
 */
 
 ({
-    // Every function written here should start in this format
+    // すべてのアクション関数は以下の書式で始めます。
     // nameOfFunction : function(component, event, helper)
 	doInit : function(component, event, helper) {
 
-        //Standard way to load a record template using Lightning Data Service
+        // 取引先責任者の force:recordData を指定し初期化、すなわち空のレコードを作成します。引数は
+        // objectApiName ⇢ オブジェクトをContactと指定します。force:recordData ではオブジェクトの指定は行われていません。
+        // recordTypeId ⇢ ここでは未指定です
+        // skipCache ⇢ ローカルのキャッシュをskipするかどうかを指定できます
+        // callback ⇢ 空のレコードが作成されたあと行われる関数。ここではエラーをチェックしています。
         component.find("contactRecordCreator").getNewRecord(
         	"Contact",
             null,
@@ -28,22 +32,24 @@
 	},
 
     handleSaveContact : function(component, event, helper){
-        //This is how we link the new Contact with the actual Account Id
+        // 新しく作成された取引先責任者のAccountIdに v.recordId を指定しています。
         component.set("v.simpleNewContact.AccountId", component.get("v.recordId"));
-        //Standard way to save a record using Lightning Data Service
+        // 取引先責任者の force:recordData を指定し保存しています。
+        // 引数はコールバック関数のみです。
         component.find("contactRecordCreator").saveRecord(function(saveResult){
             if(saveResult.state === "SUCCESS" || saveResult.state === "DRAFT"){
-                //resultToast is a pop-up window that show messages.
+                // 成功時にはトーストで新規取引先が保存されたことを表示します。
+                // ローカルキャッシュにのみ保存された場合 DRAFT となりますが、ネットワークが回復するとサーバに保存されます。
                 var resultsToast = $A.get("e.force:showToast");
                 resultsToast.setParams({
-                    "title" : "Contact saved",
-                    "message" : "The new contact was created",
+                    "title" : "成功",
+                    "message" : "取引先責任者が作成されました",
                     "type" : "success"
                 });
-
                 $A.get("e.force:closeQuickAction").fire();
                 resultsToast.fire();
                 $A.get("e.force:refreshView").fire();
+            // 以下はエラー発生時の処理です。
             }else if(saveResult.state === "INCOMPLETE"){
                 console.log("User is offline, device doesn't support drafts.");
             }else if(saveResult.state === "ERROR"){

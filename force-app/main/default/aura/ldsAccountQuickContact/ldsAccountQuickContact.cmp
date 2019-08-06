@@ -5,21 +5,27 @@
  * For full license text, see LICENSE.txt file in the repo root
  -->
 
-<!-- 
-To be used as a quick action, a Lightning component needs to meet certain conditions. It needs to be configured as able to be executed as an action. It also needs to know the context of the page that it’s executed from.
+<!--
+LigntningコンポーネントをQuick Actionで使用するにはいくつかの条件があります。
+まず、Actionとして実行できるように "force:lightningQuickActionWithoutHeader" インターフェースを実装する必要があります。
+また、実行されたページのコンテキストを知るため "force:hasRecordId" インターフェースを実装する必要があります。これによってレコードIDを保持することができるようになります。
 
-For the component to know its page context, it must implement the "force:hasRecordId" interface. 
-This interface helps save the record ID, so you can make changes to the record.
-
-For the component to be used as a quick action, it must also implement the  "force:lightningQuickActionWithoutHeader" interface.
-
-This component uses Lightning Data Service (LDS), so you don’t need an Apex class.
+このコンポーネントでは Lightning Data Service (LDS) を使用しているためApexクラスは不要です。
 -->
 
 <aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId">
     
-    <!-- To implement LDS, you need "target" attributes to show and save data, plus "force:recordData". -->
-	<!-- First we load the account data (the first recordData), then the new contact form (the second recordData) -->
+    <!-- LDSを使用するにあたっていくつかのtargetとなる aura:attribute を定義し、それらを force:recordData で指定します。
+         ここでは取引先と新たに作成する取引先責任者、各1レコードを force:recordData で取り扱います。 -->
+
+    <!-- 最初は取引先のレコードです。
+         force:recordData内の recordId で読み込むレコードIDを指定しています。force:hasRecordIdが指定されているため
+         ここで表示されている取引先のレコードが読み込まれることになります。以降次のようになっています。
+         fields ⇢ レコードの項目。ここで指定されていない項目はLDSで取り扱いできません。
+         targetRecord ⇢ レコードが格納されている場所
+         targetFields ⇢ targetRecordの項目値を参照するビュー
+         targetError ⇢ エラー発生時の格納場所
+    -->
     <aura:attribute name="account" type="Object" />
     <aura:attribute name="simpleAccount" type="Object" />
     <aura:attribute name="accountError" type="String" />
@@ -29,32 +35,32 @@ This component uses Lightning Data Service (LDS), so you don’t need an Apex cl
                       targetRecord="{!v.account}"
                       targetFields="{!v.simpleAccount}"
                       targetError="{!v.accountError}" />
-    
-    <!-- targetRecord -> Where to store the result
-		 targetFields -> A simplified view of the fields on targetRecord. We refer to this object in the user interface markup.
-         targetError -> If any error is found, it stores the error message
-		 fields -> Specifies which of the record's fields to query	 -->
-    
-    
+
+    <!-- 次は取引先責任者のレコードです。
+         新規に作成するため recordId は未定義のままにします。
+         layoutType ⇢ LDSで扱うレコードの項目を指定します。
+                      指定できるのはFULL(ページレイアウト)かCOMPACT(コンパクトレイアウト)のいずれかです。
+                      役割としてはfieldsと同じなので、2つの指定は共存できません。
+	-->
     <aura:attribute name="newContact" type="Object" access="private" />
     <aura:attribute name="simpleNewContact" type="Object" access="private" />
     <aura:attribute name="newContactError" type="String" access="private" />
     <force:recordData aura:id="contactRecordCreator"
-                     layoutType="FULL"
-                     targetRecord="{!v.newContact}"
-                     targetFields="{!v.simpleNewContact}"
-                     targetError="{!v.newContactError}" />
-    
-    <!-- First we initialize the form -->
+                      layoutType="FULL"
+                      targetRecord="{!v.newContact}"
+                      targetFields="{!v.simpleNewContact}"
+                      targetError="{!v.newContactError}" />
+
+    <!-- フォームの初期化 -->
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
-    
-    <!-- Header with details about the account -->    
+
+    <!-- ヘッダーに取引先名を表示 -->
     <div class="slds-modal__header">
         <p class="slds-text-heading--label">{!v.simpleAccount.Name}</p>
-        <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-left">Create new contact</h1>
+        <h1 class="slds-page-header__title slds-m-right--small slds-truncate slds-align-left">新規取引先責任者</h1>
     </div>
-    
-    <!-- Display Lightning Data Service errors, if any -->
+
+    <!-- Lightning Data Service のエラーが発生していた場合は表示 -->
     <aura:if isTrue="{!not(empty(v.accountError))}">
     	<div class="recordError">
         	<ui:message title="Error" severity="error" closable="true">
@@ -62,35 +68,36 @@ This component uses Lightning Data Service (LDS), so you don’t need an Apex cl
             </ui:message>
         </div>
     </aura:if>
-    <aura:if isTrue="{!not(empty(v.accountError))}">
+    <aura:if isTrue="{!not(empty(v.newContactError))}">
     	<div class="recordError">
         	<ui:message title="Error" severity="error" closable="true">
             	{!v.newContactError}
             </ui:message>
         </div>
     </aura:if>
-    <!-- Display new contact form -->
+
+    <!-- 新規取引先入力フォーム -->
     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-    	<lightning:input aura:id="contactField" name="firstName" label="First Name"
-                     	value="{!v.simpleNewContact.FirstName}" required="true" />
-    
-        <lightning:input aura:id="contactField" name="lastName" label="Last Name"
+        <lightning:input aura:id="contactField" name="lastName" label="姓"
                          value="{!v.simpleNewContact.LastName}" required="true" />
-        
-        <lightning:input aura:id="contactField" name="phone" label="Phone"
+
+        <lightning:input aura:id="contactField" name="firstName" label="名"
+                         value="{!v.simpleNewContact.FirstName}" required="true" />
+
+        <lightning:input aura:id="contactField" name="phone" label="電話"
                          pattern="^(1?(-?\d{3})-?)?(\d{3})(-?\d{4})$"
-                         messageWhenPatternMismatch="The phone number must contain 7, 10, or 11 digits. Hyphens are optional."
+                         messageWhenPatternMismatch="電話番号は 7, 10 あるいは 11桁の数値でハイフンは任意です。"
                          value="{!v.simpleNewContact.Phone}" required="true" />
-        
-        <lightning:input aura:id="contactField" name="email" label="Email"
+
+        <lightning:input aura:id="contactField" name="email" label="メール"
                          value="{!v.simpleNewContact.Email}" />
     </div>
     <div class="slds-modal__footer">
-        <lightning:button class="slds-button_neutral" label="Save" onclick="{!c.handleSaveContact}"/>
-        <lightning:button class="slds-button_brand" label="Cancel" onclick="{!c.cancel}"/>
+        <lightning:button class="slds-button_neutral" label="作成" onclick="{!c.handleSaveContact}"/>
+        <lightning:button class="slds-button_brand" label="キャンセル" onclick="{!c.cancel}"/>
     </div>
-    
-    <!-- The height of the modal is defined in Salesforce when you create the new action. -->
-    <!-- Recommended height: 398px -->
+
+    <!-- モーダルウィンドウの高さはSalesforceでアクションを作成するときに決めます。 -->
+    <!-- 推奨の高さ: 400px -->
 
 </aura:component>

@@ -6,10 +6,10 @@
 */
 
 ({
-    // Every function written here should start in this format
+    // すべてのアクション関数は以下の書式で始めます。
     // nameOfFunction : function(component, event, helper)
 	handleDeleteRecord : function(component, event, helper) {
-        //Standard way to delete a record using Lightning Data Service
+        // Lightning Data Service でレコードを削除する一般的な方法です。
         component.find("recordHandler").deleteRecord($A.getCallback(function(deleteResult){
             if(deleteResult.state === "SUCCESS" || deleteResult.state === "DRAFT"){
                 console.log("Record is deleted.");
@@ -17,11 +17,12 @@
                 var resultsToast = $A.get("e.force:showToast");
                 resultsToast.setParams({
                     "title" : "Deleted",
-                    "message" : "The record was deleted.",
+                    "message" : "レコードは削除されました",
                     "type" : "info"
                 });
                 resultsToast.fire();
-                var url = "/one/one.app#/sObject/Contact/list?filterName=Recent";
+                // このアクションはオブジェクトの種類に依存しませんが、削除後には取引先責任者の最近参照したデータに遷移します。
+                var url = "/lightning/o/Contact/list?filterName=Recent";
                 var urlEvent = $A.get("e.force:navigateToURL");
                 urlEvent.setParams({
                     "url" : url

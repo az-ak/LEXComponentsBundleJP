@@ -6,54 +6,51 @@
  -->
 
 <!--
-To be used as a quick action, a Lightning component needs to meet certain conditions. It needs to be configured as able to be executed as an action. It also needs to know the context of the page that it’s executed from. And, since you’re modifying data and want to save the changes, you need an Apex class to help with the work.
+LigntningコンポーネントをQuick Actionで使用するにはいくつかの条件があります。
+まず、Actionとして実行できるように "force:lightningQuickActionWithoutHeader" インターフェースを実装する必要があります。
+また、実行されたページのコンテキストを知るため "force:hasRecordId" インターフェースを実装する必要があります。これによってレコードIDを保持することができるようになります。
 
-For the component to know its page context, it must implement the "force:hasRecordId" interface. 
-This interface helps save the record ID, so you can make changes to the record.
-
-For the component to be used as a quick action, it must also implement the  "force:lightningQuickActionWithoutHeader" interface.
-
+また、このコンポーネントではデータを保存するためApexクラスを使用しています。
 -->
 <aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId" 
                 controller="AccountQuickContactController">
-    			<!-- Replace AccountQuickContactController with your Apex class -->
-    
-    <!-- This attribute saves the record ID -->
+    			<!-- AccountQuickContactController を必要に応じてご自身のApexクラスに置き換えて下さい。 -->
+
+    <!-- この属性はレコードIDを保存します -->
     <aura:attribute name="recordId" type="String" />
-    
-    <!-- These attributes are needed to save a contact for the account.
-		First Name, Last Name, Phone and Email-->
+
+    <!-- これらの属性は取引先の取引先責任者を保存するために必要です。
+        First Name, Last Name, Phone and Email-->
     <aura:attribute name="firstName" type="String" />
     <aura:attribute name="lastName" type="String" />
     <aura:attribute name="phone" type="String" />
     <aura:attribute name="email" type="String" />
-    
-    <!-- User Interface -->
+
+    <!-- ユーザインタフェース -->
     <div class="slds-modal__header">
-        <h2 class="slds-text-heading_medium slds-hyphenate">New contact</h2>
+        <h2 class="slds-text-heading_medium slds-hyphenate">新規取引先責任者</h2>
     </div>
     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" >
         <div>
-            <ui:inputText aura:id="contactFirstName" label="First Name" value="{!v.firstName}" />
+            <ui:inputText aura:id="contactLastName" label="姓" value="{!v.lastName}" required="true" />
         </div>
         <div>
-            <ui:inputText aura:id="contactLastName" label="Last Name" value="{!v.lastName}" required="true" />
+            <ui:inputText aura:id="contactFirstName" label="名" value="{!v.firstName}" />
         </div>
         <div>
-            <ui:inputPhone label="Phone" value="{!v.phone}" />
+            <ui:inputPhone label="電話" value="{!v.phone}" />
         </div>
         <div>
-            <ui:inputText label="Email" value="{!v.email}" />
+            <ui:inputText label="メール" value="{!v.email}" />
         </div>
     </div>
     <div class="slds-modal__footer">
-        <lightning:button class="slds-button_neutral" label="Create" onclick="{!c.submitForm}" />
-        <lightning:button class="slds-button_brand" label="Cancel" onclick="{!c.cancel}" />
-        <!-- The "c" in "{!c.nameOfTheFunction}" is how the component communicates with the 
-                Javascript controller.
-                "nameOfTheFunction" will be replaced with the name of the function to be executed in the Javascript controller. -->
+        <lightning:button class="slds-button_neutral" label="作成" onclick="{!c.submitForm}" />
+        <lightning:button class="slds-button_brand" label="キャンセル" onclick="{!c.cancel}" />
+        <!-- "{!c.nameOfTheFunction}" の "c" はJavaScriptコントローラと連携することを示します。
+            "nameOfTheFunction" はJavaScriptコントローラの実行したいアクション関数名に置き換えることができます。 -->
     </div>
-    <!-- The height of the modal is defined in Salesforce when you create the new action. -->
-    <!-- Recommended height: 395px -->
-    
+    <!-- モーダルウィンドウの高さはSalesforceでアクションを作成するときに決めます。 -->
+    <!-- 推奨の高さ: 395px -->
+
 </aura:component>

@@ -6,7 +6,7 @@
 */
 
 ({
-    // Every function should start in this format
+    // すべてのアクション関数は以下の書式で始めます。
     // nameOfFunction : function(component, event, helper)
 	handleSaveRecord : function(component, event, helper) {
          //This saves the record template using Lightning Data Service
@@ -23,7 +23,7 @@
             }
         }));
 	},
-    
+
     cancel : function(component, event, helper){
         $A.get("e.force:closeQuickAction").fire();
     }

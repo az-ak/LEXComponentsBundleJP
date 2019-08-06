@@ -6,19 +6,19 @@
 */
 
 ({
-    // Every function should start in this format
+    // すべてのアクション関数は以下の書式で始めます。
     // nameOfFunction : function(component, event, helper)
 	openBillingAddress : function(component, event, helper) {
-        //Since we have a function that works in the same way with different values,
-        //we write that function in the helper so we don’t repeat code.
-        //We set the selected value in a variable and send it to the helper along with the component.
+        // 別の値を使って同様に動作する関数が複数必要になります。
+        // 共通の関数はヘルパーに記述し重複を避けることにします。
+        // componentと選択された値をを引数として共通のヘルパー関数を呼び出します。
         helper.openAddress(component, "Billing");
 	},
-    
+
     openShippingAddress : function(component, event, helper) {
         helper.openAddress(component, "Shipping");
     },
-    
+
     cancel : function(component, event, helper){
         $A.get("e.force:closeQuickAction").fire();
     }

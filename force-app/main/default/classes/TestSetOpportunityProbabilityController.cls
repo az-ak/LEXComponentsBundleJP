@@ -7,7 +7,7 @@
 
 @isTest
 public with sharing class TestSetOpportunityProbabilityController {
-    
+
     @testSetup
     static void setupData(){
         Opportunity o = new Opportunity();

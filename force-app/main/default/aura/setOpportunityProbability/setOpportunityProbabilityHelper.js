@@ -6,46 +6,46 @@
 */
 
 ({
-    //This is the helper method used in the Javascript controller
-    //The main idea of helper methods is to reuse code and avoid writing the same thing over and over.
+    // これはJavaScriptコントローラのヘルパー関数です。
+    // コードを再利用し、同じ内容を複数箇所に記述することを避けるために使います。
 	updateProbability : function(value, component) {
-        
-        //This is how the Javascript controller gets the record ID
+
+        // recordId属性をコンポーネントから得ます。
         var id = component.get("v.recordId");
-        
-        //This is how the Javascript controller gets the function from the Apex controller
-        //The component works as a bridge between the Javascript controller and the Apex controller
+
+        // Apexコントローラの関数は以下のように指定します。
+        // このコンポーネントがJavaScriptコントローラとApexコントローラの橋渡しをします。
         var action = component.get("c.updateProbability");
-        
-        //This sets the parameters of the Apex controller function
-        //The parameter name must be exactly the same as in the Apex controller
+
+        // Apexコントローラの関数に引数を設定します。
+        // パラメータ名はApexコントローラの関数の引数名と正確に一致している必要があります。
         action.setParams({
             "id" : id,
             "prob" : value
         });
-        
-        //This defines what to do when the response from the Apex controller is received.
+
+        // ここでApexコントローラからレスポンスを得た際に何を行うかを定義します。
         action.setCallback(this,
-            //We define what to do inside a function that gets the response from the Apex controller as a parameter
+        	// functionの引数にApexコントローラのレスポンスをとりfunction内で実行する内容を定義します。
           	function(response){
-                //This saves the state of the response (successful or not).
+                // レスポンスの状態（成功/失敗）を保存します。
             	var state = response.getState();
             	if(state === "SUCCESS"){
-                    //These next commands call the Aura functions. They are predefined functions that help with the user interface.
-                    //For more info about Aura:
-                    //    https://<myDomain>.lightning.force.com/auradocs/reference.app
-                    //where <MyDomain> is the name of your custom Salesforce domain
                     var resultsToast = $A.get("e.force:showToast");
                     resultsToast.setParams({
-                        "title" : "Success",
-                        "message" : "The opportunity was updated.",
+                        "title" : "成功",
+                        "message" : "商談は更新されました。",
                         "type" : "success"
                     });
                     resultsToast.fire();
+                	// 以下はAura関数をコールしています。これらはユーザインタフェースを制御する事前定義の関数です。
+                	// Auraに関してのより詳しい情報は以下を参照してください:
+                	//	https://<myDomain>.lightning.force.com/auradocs/reference.app
+                	// "<myDomain>" は組織の実際のドメインに変更して下さい。
                 	$A.get("e.force:refreshView").fire();
                 	$A.get("e.force:closeQuickAction").fire();
             	}else{
-                	//This is a common way to handle possible errors.
+                    // 以下はエラーハンドリングの一般的な方法です。
                 	var errors = response.getError();
                     if(errors){
                         if(errors[0] && errors[0].message){
@@ -57,7 +57,7 @@
             	}
         	}
         );
-        //This executes the function in the Apex controller
+        // ここでApexコントローラの関数を実行しています。
         $A.enqueueAction(action);
 	}
 })

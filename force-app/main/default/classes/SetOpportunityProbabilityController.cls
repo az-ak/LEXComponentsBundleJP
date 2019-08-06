@@ -6,20 +6,17 @@
  */
  
 public with sharing class SetOpportunityProbabilityController {
-
-    /*
-		All the functions that will be used in Lightning Components MUST have
-		@AuraEnabled annotation at the top of the function signature.
-		ex:
+    /*  Lightningコンポーネントがコールするすべての関数は @AuraEnabled アノテーションが関数シグネチャの前に必要です。
+		例:
 			@AuraEnabled
 			public static void someFunction(Object parameter){}
 
-		Also:
-			- Methods must be static and marked public or global. Non-static methods aren’t supported.
-			- If a method returns an object, instance methods that retrieve the value of the object’s instance field must be public.
-			- Use unique names for client-side and server-side actions in a component. A JavaScript function (client-side action)
-			  with the same name as an Apex method (server-side action ) can lead to hard-to-debug issues. In debug mode,
-			  the framework logs a browser console warning about the clashing client-side and server-side action names.
+		さらに:
+			- メソッドは static で、かつ public または global とマークされている必要があります。非静的メソッドはサポートされていません。
+			- メソッドがオブジェクトを返す場合、オブジェクトのインスタンス項目の値を取得するインスタンスメソッドは public である必要があります。
+			- コンポーネント内のクライアント側アクションとサーバ側アクションには別の名前を使用して下さい。JavaScript関数(クライアント側アクション)
+			  とApexメソッド(サーバ側アクション)が同じ名前だと、問題が発生したときにデバッグしにくくなるおそれがあります。デバッグモードにおいては
+			  フレームワークによって、クライアント側アクション名とサーバ側アクション名の競合に関する警告がブラウザコンソールに記録されます。
 	*/
 
     @AuraEnabled
@@ -30,5 +27,5 @@ public with sharing class SetOpportunityProbabilityController {
         if(prob == '3') op.Probability = 80.0;
         update op;
     }
-    
+
 }

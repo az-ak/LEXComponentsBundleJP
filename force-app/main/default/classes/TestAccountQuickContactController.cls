@@ -7,7 +7,7 @@
 
 @isTest
 public with sharing class TestAccountQuickContactController {
-    
+
     @testSetup
     static void setupData(){
         Account a = new Account();

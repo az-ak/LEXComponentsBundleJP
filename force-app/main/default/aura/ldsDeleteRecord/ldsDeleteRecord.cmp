@@ -5,32 +5,29 @@
  * For full license text, see LICENSE.txt file in the repo root
  -->
 
-<!-- 
-To be used as a quick action, a Lightning component needs to meet certain conditions. It needs to be configured as able to be executed as an action. It also needs to know the context of the page that it’s executed from.
+<!--
+LigntningコンポーネントをQuick Actionで使用するにはいくつかの条件があります。
+まず、Actionとして実行できるように "force:lightningQuickActionWithoutHeader" インターフェースを実装する必要があります。
+また、実行されたページのコンテキストを知るため "force:hasRecordId" インターフェースを実装する必要があります。これによってレコードIDを保持することができるようになります。
 
-For the component to know its page context, it must implement the "force:hasRecordId" interface. 
-This interface helps save the record ID, so you can make changes to the record.
-
-For the component to be used as a quick action, it must also implement the  "force:lightningQuickActionWithoutHeader" interface.
-
-In this case we are using Lightning Data Service (LDS), so you don’t need an Apex class.
-
-This quick action needs to be implemented in Contact object.
-
+このコンポーネントでは Lightning Data Service (LDS) を使用しているためApexクラスは不要です。
 -->
+
 <aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId" >
-    
-    <!-- In this scenario, if an error happens, that’s the only thing we might need to show. -->
+
+    <!-- このシナリオで表示スべきなのは、エラー発生時のメッセージのみです。
+        recordErrorはJavaScriptコントローラで削除に失敗したときに設定されます。
+    -->
     <aura:attribute name="recordError" type="String" access="private" />
     <force:recordData aura:id="recordHandler"
                       recordId="{!v.recordId}"
                       fields="Id" />
-    
-    <!-- User Interface -->
+
+    <!-- ユーザインターフェース -->
     <div class="slds-modal__header">
-        <h2 class="slds-text-heading_medium slds-hyphenate">Delete contact?</h2>
+        <h2 class="slds-text-heading_medium slds-hyphenate">削除しますか?</h2>
     </div>
-    <!-- Display LDS errors, if any -->
+    <!-- エラーが発生したときに表示 -->
     <aura:if isTrue="{!not(empty(v.recordError))}">
     	<div class="recordError">
         	<ui:message title="Error" severity="error" closable="true">
@@ -38,16 +35,20 @@ This quick action needs to be implemented in Contact object.
             </ui:message>
         </div>
     </aura:if>
-    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-    	<p>You are about to delete the contact.</p>
-        <br/>
-        <p>Do you want to continue?</p>
-    </div>
+    <aura:if isTrue="{!empty(v.recordError)}">
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+            <p>レコードを削除します。</p>
+            <br/>
+            <p>続けてよいですか？</p>
+        </div>
+    </aura:if>
     <div class="slds-modal__footer" >
-        <lightning:button class="slds-button_brand" label="Cancel" onclick="{!c.cancel}"/>
-        <lightning:button class="slds-button_neutral" label="Delete" onclick="{!c.handleDeleteRecord}" />
+        <lightning:button class="slds-button_brand" label="キャンセル" onclick="{!c.cancel}"/>
+        <aura:if isTrue="{!empty(v.recordError)}">
+            <lightning:button class="slds-button_neutral" label="削除" onclick="{!c.handleDeleteRecord}" />
+        </aura:if>
     </div>
-    <!-- The height of the modal is defined in Salesforce when you create the new action. -->
-    <!-- Recommended height: 250px -->
-    
+    <!-- モーダルウィンドウの高さはSalesforceでアクションを作成するときに決めます。 -->
+    <!-- 推奨の高さ: 250px -->
+
 </aura:component>

@@ -7,7 +7,7 @@
 
 @isTest
 public with sharing class TestProBonoOpportunityController {
-    
+
     @testSetup
     static void setupData(){
         Opportunity o = new Opportunity();
@@ -34,7 +34,7 @@ public with sharing class TestProBonoOpportunityController {
         Test.stopTest();
         Opportunity updatedOpp = [SELECT Id, Amount, Description FROM Opportunity WHERE Name = 'Test Opportunity For Unit Test Purposes'];
         System.assertEquals(0, updatedOpp.Amount);
-        System.assertEquals('Converted to Pro-Bono.', updatedOpp.Description);
+        System.assertEquals('プロボノ商談に変換されました。', updatedOpp.Description);
     }
 
     @isTest
@@ -45,6 +45,6 @@ public with sharing class TestProBonoOpportunityController {
         Test.stopTest();
         Opportunity updatedOpp = [SELECT Id, Amount, Description FROM Opportunity WHERE Name = 'Another Test Opportunity For Unit Test Purposes'];
         System.assertEquals(0, updatedOpp.Amount);
-        System.assertEquals('Test Data. Converted to Pro-Bono.', updatedOpp.Description);
+        System.assertEquals('Test Data。プロボノ商談に変換されました。', updatedOpp.Description);
     }
 }

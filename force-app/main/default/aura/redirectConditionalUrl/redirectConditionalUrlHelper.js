@@ -6,73 +6,71 @@
 */
 
 ({
-    //This is the helper method, used in the Javascript controller.
-    //The purpose of helper methods is to reuse code, to avoid writing the same thing over and over.
+    // これはJavaScriptコントローラのヘルパー関数です。
+    // コードを再利用し、同じ内容を複数箇所に記述することを避けるために使います。
 	openAddress : function(component, addressType) {
-        
-        //This is how the Javascript controller gets the record ID
+
+        // recordId属性をコンポーネントから得ます。
         var recordId = component.get("v.recordId");
-        
-        //This is how the Javascript controller gets the function from the Apex controller
-        //The component works as a bridge between the Javascript controller and the Apex controller
+
+        // Apexコントローラの関数は以下のように指定します。
+        // このコンポーネントがJavaScriptコントローラとApexコントローラの橋渡しをします。
         var action = component.get("c.getAccountAddress");
-        
-        //This sets the parameters of the Apex controller function
-        //The parameter name must be exactly the same as in the Apex controller
+
+        // Apexコントローラの関数に引数を設定します。
+        // パラメータ名はApexコントローラの関数の引数名と正確に一致している必要があります。
         action.setParams({
             "id" : recordId,
             "addressType" : addressType
         });
-        
-        //This defines what to do when the response from the Apex controller is received.
+
+        // ここでApexコントローラからレスポンスを得た際に何を行うかを定義します。
         action.setCallback(this,
-            //This defines what to do inside a function that gets the response as a parameter from the Apex controller
+        	// functionの引数にApexコントローラのレスポンスをとりfunction内で実行する内容を定義します。
             function(response){
-                //This saves the state of the response (successful or not).
+                // レスポンスの状態（成功/失敗）を保存します。
             	var state = response.getState();
             	if(state === "SUCCESS"){
-                    //In the component, we have an object attribute (account).
-                    //It works as a placeholder for the object.
-                    //This sets the object of the response in the component
+                    // コンポーネントにおいて"account"という属性を定義しました。
+                    // これがオブジェクトのプレースホルダーとなります。
+                    // ここでApexコントローラから戻されたオブジェクトをこのコンポーネントに格納しています。
                 	component.set("v.account", response.getReturnValue());
-                    
-                    //Now that the object we got from the server is saved in the component,
-                    //we get it from the component to use its data.
+
+                    // サーバから戻されたオブジェクトはコンポーネントに保存されました。
+                    // このコンポーネントからデータを得て使用します。
                 	var account = component.get("v.account");
-                    
-                    //If the option selected was "Open Billing Address"...
+
+                    // 「請求先」が選択されていた場合
                 	if(addressType == "Billing"){
-                        //To redirect the page, we need an event with a URL as a parameter
-                        //First, we create the variable.
-                        //We’ll open Google maps with the address of the account.
-                        //Then, we add that info into the URL.
+                        // リダイレクトさせるために、URLをパラメータとしてイベントを発火します。
+                        // URL用の変数を作成し、Google MapのURLと引数として取引先のアドレスを組み立てます。
                     	var url = "https://www.google.com/maps/search/?api=1&query="+account.BillingStreet+"+"+account.BillingCity
                 				+",+"+account.BillingState+",+"+account.BillingCountry;
-                        
-                        //This is the event that does the redirect. First we define it.
+
+                        // これがリダイレクトを実行するイベントです。まずは定義します。
                 		var urlEvent = $A.get("e.force:navigateToURL");
-                        
-                        //Then we set the URL to navigate as a parameter.
+
+                        // 次にURLをイベントのパラメータとして設定します。
                 		urlEvent.setParams({
                    			"url" : url
-                		});
+                        });
+                        // イベントを発火します。
                 		urlEvent.fire();
                 		$A.get("e.force:closeQuickAction").fire();
-                    
+
                 	}else{
-                    
                     	var url = "https://www.google.com/maps/search/?api=1&query="+account.ShippingStreet+"+"+account.ShippingCity
                 				+",+"+account.ShippingState+",+"+account.ShippingCountry;
-                		var urlEvent = $A.get("e.force:navigateToURL");  
+                		var urlEvent = $A.get("e.force:navigateToURL");
                 		urlEvent.setParams({
                    			"url" : url
                 		});
                 		urlEvent.fire();
                 		$A.get("e.force:closeQuickAction").fire();
-                	}                
+                	}
             	}
             	else{
-                	//This is a common way to handle possible errors.
+                    // 以下はエラーハンドリングの一般的な方法です。
                 	var errors = response.getError();
                     if(errors){
                         if(errors[0] && errors[0].message){

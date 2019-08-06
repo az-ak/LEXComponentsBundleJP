@@ -5,43 +5,45 @@
  * For full license text, see LICENSE.txt file in the repo root
  -->
 
-<!-- 
-To be used as a quick action, a Lightning component needs to meet certain conditions. It needs to be configured as able to be executed as an action. It also needs to know the context of the page that it’s executed from.
+<!--
+LigntningコンポーネントをQuick Actionで使用するにはいくつかの条件があります。
+まず、Actionとして実行できるように "force:lightningQuickActionWithoutHeader" インターフェースを実装する必要があります。
+また、実行されたページのコンテキストを知るため "force:hasRecordId" インターフェースを実装する必要があります。これによってレコードIDを保持することができるようになります。
 
-For the component to know its page context, it must implement the "force:hasRecordId" interface. 
-This interface helps save the record ID, so you can make changes to the record.
-
-For the component to be used as a quick action, it must also implement the  "force:lightningQuickActionWithoutHeader" interface.
-
-In this case we are using Lightning Data Service (LDS), so you don’t need an Apex class.
-
-This quick action needs to be implemented in Account object.
-
+このコンポーネントでは Lightning Data Service (LDS) を使用しており、Apexクラスは不要です。
+クイックアクションは取引先オブジェクトに作成される必要があります。
 -->
 <aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId">
-    
-    <!-- To implement LDS we need "target" attributes to show and save data, plus "force:recordData" -->
+
+    <!-- LDSを使用するにあたっていくつかのtargetとなる aura:attribute を定義し、それらを force:recordData で指定します。
+         ここでは取引先レコードを force:recordData で取り扱います。
+
+         force:recordData内の recordId で読み込むレコードIDを指定しています。force:hasRecordIdが指定されているため
+         ここで表示されている取引先のレコードが読み込まれることになります。以降次のようになっています。
+         layoutType ⇢ LDSで扱うレコードの項目を指定します。
+                    　指定できるのはFULL(ページレイアウト)かCOMPACT(コンパクトレイアウト)のいずれかです。
+                    　役割としてはfieldsと同じなので、2つの指定は共存できません。
+         targetRecord ⇢ レコードが格納されている場所
+         targetFields ⇢ targetRecordの項目値を参照するビュー
+         targetError ⇢ エラー発生時の格納場所
+         mode ⇢ このレコードを更新するのでEDITを指定します。
+    -->
     <aura:attribute name="record" type="Object" />
     <aura:attribute name="simpleRecord" type="Object" />
     <aura:attribute name="recordError" type="String" />
     <force:recordData aura:id="recordEditor"
-                      layoutType="FULL"
                       recordId="{!v.recordId}"
-                      targetError="{!v.recordError}"
+                      layoutType="FULL"
                       targetRecord="{!v.record}"
                       targetFields="{!v.simpleRecord}"
+                      targetError="{!v.recordError}"
                       mode="EDIT" />
-    
-    <!-- targetRecord -> Stores the result
-		 targetFields -> A simplified view of the fields on targetRecord. We refer to this object in the user interface markup.
-         targetError  -> Stores the error message, if any.
-	-->
-    
-	<!-- User Interface -->    
+
+	<!-- ユーザインタフェース -->
     <div class="slds-modal__header">
        	<h2 class="slds-text-heading_medium slds-hyphenate">{!v.simpleRecord.Name}</h2>
     </div>
-    <!-- Display LDS errors if any -->
+    <!-- Lightning Data Service のエラーが発生していた場合は表示 -->
 	<aura:if isTrue="{!not(empty(v.recordError))}">
     	<div class="recordError">
         	<ui:message title="Error" severity="error" closable="true">
@@ -50,14 +52,14 @@ This quick action needs to be implemented in Account object.
         </div>
     </aura:if>
     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-    	<lightning:input aura:id="recordName" name="recordName" label="Name"
+    	<lightning:input aura:id="recordName" name="recordName" label="取引先名"
                      value="{!v.simpleRecord.Name}" required="true" />
     </div>
     <div class="slds-modal__footer">
-    	<lightning:button class="slds-button_brand" label="Cancel" onclick="{!c.cancel}" />
-        <lightning:button class="slds-button_neutral" label="Save" onclick="{!c.handleSaveRecord}" />
+    	<lightning:button class="slds-button_brand" label="キャンセル" onclick="{!c.cancel}" />
+        <lightning:button class="slds-button_neutral" label="保存" onclick="{!c.handleSaveRecord}" />
     </div>
-    <!-- The height of the modal is defined in Salesforce when you create the new action. -->
-    <!-- Recommended height: 250px -->
-    
+    <!-- モーダルウィンドウの高さはSalesforceでアクションを作成するときに決めます。 -->
+    <!-- 推奨の高さ: 250px -->
+
 </aura:component>
